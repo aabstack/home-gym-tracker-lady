@@ -40,7 +40,7 @@ describe('ensureSeeded', () => {
   it('loads all exercises, days and warm-up items', async () => {
     expect(await ensureSeeded(db)).toBe(true);
     expect(await db.exercises.count()).toBe(programSeed.exercises.length);
-    expect(await db.exercises.count()).toBe(19);
+    expect(await db.exercises.count()).toBe(23);
     expect(await db.programDays.count()).toBe(3);
     expect(await db.warmup.count()).toBe(6);
     expect((await db.meta.get('seedVersion'))?.value).toBe(programSeed.seedVersion);
@@ -49,7 +49,7 @@ describe('ensureSeeded', () => {
   it('is idempotent', async () => {
     await ensureSeeded(db);
     expect(await ensureSeeded(db)).toBe(false);
-    expect(await db.exercises.count()).toBe(19);
+    expect(await db.exercises.count()).toBe(23);
     expect(await db.programDays.count()).toBe(3);
   });
 
@@ -74,7 +74,7 @@ describe('ensureSeeded', () => {
     const bss = await db.exercises.get('bulgarian_split_squat');
     expect(bss).toEqual(programSeed.exercises.find((e) => e.id === 'bulgarian_split_squat'));
     const dayC = await db.programDays.get('C');
-    expect(dayC?.items).toHaveLength(7);
+    expect(dayC?.items).toHaveLength(6);
   });
 
   it('keeps every load light (lady version)', () => {

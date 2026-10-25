@@ -1222,6 +1222,131 @@ const LADY_DEMOS: Record<string, Demo> = {
     labels: ['Lower slowly', 'Raise to shoulder height'],
   },
 
+  // ---- Program v2: home versions of her gym plan's machine / cable moves ----
+
+  side_lying_hip_abduction: {
+    viewBox: VIEWBOX,
+    // Seen from in front while she lies on her side: the top leg lifts towards the ceiling.
+    view: 'front',
+    props: [FLOOR],
+    poses: {
+      start: {
+        hip: [64, 87],
+        torso: 180,
+        head: 180,
+        handN: hp(-3, -3),
+        handF: [14, 89],
+        footN: [97.4, 69.3],
+        footF: [101.8, 89],
+        toeN: -28,
+      },
+      end: {
+        hip: [64, 87],
+        torso: 180,
+        head: 180,
+        handN: hp(-3, -3),
+        handF: [14, 89],
+        footN: [101.8, 87],
+        footF: [101.8, 89],
+      },
+    },
+    bends: { elbowN: -1, elbowF: -1 },
+    labels: ['Lower slowly', 'Lift top leg, heel first'],
+  },
+
+  glute_kickback: {
+    viewBox: VIEWBOX,
+    props: [FLOOR],
+    poses: {
+      // On all fours: hands under shoulders, knees under hips.
+      start: {
+        hip: [40, 70],
+        torso: -9,
+        handN: [66, 91],
+        handF: [64, 91],
+        footN: [6, 58],
+        footF: [24, 90],
+        toeN: 180,
+        toeF: 180,
+      },
+      end: {
+        hip: [40, 70],
+        torso: -9,
+        handN: [66, 91],
+        handF: [64, 91],
+        footN: [26, 90],
+        footF: [24, 90],
+        toeN: 180,
+        toeF: 180,
+      },
+    },
+    labels: ['Knee back under hip', 'Kick back and squeeze'],
+  },
+
+  reverse_crunch: {
+    viewBox: VIEWBOX,
+    props: [FLOOR],
+    poses: {
+      // Knees curled to the chest, hips slightly off the floor.
+      start: {
+        hip: [60, 82],
+        torso: 168,
+        head: 180,
+        handN: [60, 91],
+        handF: [58, 91],
+        footN: [64, 62],
+        footF: [62, 62],
+        toeN: -60,
+      },
+      end: {
+        hip: [60, 87],
+        torso: 180,
+        head: 180,
+        handN: [60, 91],
+        handF: [58, 91],
+        footN: [80, 74],
+        footF: [78, 74],
+        toeN: -10,
+      },
+    },
+    bends: { elbowN: -1, elbowF: -1 },
+    labels: ['Lower slowly', 'Curl knees to chest'],
+  },
+
+  band_triceps_pushdown: {
+    viewBox: hangFrame.viewBox,
+    props: [...hangFrame.props, { kind: 'band', from: [66, 4], to: 'hands' }],
+    poses: {
+      // Elbows pinned at the sides; only the forearms move.
+      start: {
+        hip: [58, 55],
+        torso: -86,
+        handN: sh(3, 26),
+        handF: sh(1, 26),
+        footN: [60, 92],
+        footF: [56, 92],
+      },
+      mid: {
+        hip: [58, 55],
+        torso: -86,
+        handN: sh(13, 14),
+        handF: sh(11, 14),
+        footN: [60, 92],
+        footF: [56, 92],
+      },
+      end: {
+        hip: [58, 55],
+        torso: -86,
+        handN: sh(6.5, 2.7),
+        handF: sh(4.5, 2.7),
+        footN: [60, 92],
+        footF: [56, 92],
+      },
+    },
+    path: ['start', 'mid', 'end'],
+    labels: ['Let hands rise to chest', 'Push down, elbows still'],
+  },
+
   // Bodyweight versions of shared exercises.
   bulgarian_split_squat: noDumbbells(BASE_DEMOS.bulgarian_split_squat),
   sl_hamstring_bridge: {

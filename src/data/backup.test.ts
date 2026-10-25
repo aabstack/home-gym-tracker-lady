@@ -96,7 +96,7 @@ describe('backup', () => {
     expect(await db.sessions.count()).toBe(0);
     expect(await db.setLogs.count()).toBe(0);
     expect(await db.settings.count()).toBe(0);
-    expect(await db.exercises.count()).toBe(19); // seed untouched
+    expect(await db.exercises.count()).toBe(23); // seed untouched
 
     const parsed = parseBackup(text);
     expect(parsed.ok).toBe(true);

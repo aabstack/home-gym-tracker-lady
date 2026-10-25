@@ -7,17 +7,18 @@ An offline-first **Progressive Web App** for logging a **light, 3-day full-body 
 > This is the **lady version**. It shares the app engine with the **male version** (https://github.com/aabstack/home-gym-tracker, tag `male-v1.0.0`) but has its own program, its own on-device database and backups, and a rose colour theme. The two apps can be installed on the same phone without mixing data.
 
 ## The program
-Designed for a 29-year-old, 62 kg, 160 cm, training at home with the same equipment: power rack with pull-up bar, 20 kg adjustable dumbbells, adjustable bench and the yellow band. Full details are in [PROGRAM.md](PROGRAM.md).
+Version 2 is built around her own 16-week plan (bigger, stronger glutes and thighs, a defined waist and toned belly, leaner back and arms), adapted to home training with the same equipment: power rack with pull-up bar, 20 kg adjustable dumbbells, adjustable bench and the yellow band. Full details, including how each gym machine maps to a home exercise, are in [PROGRAM.md](PROGRAM.md).
 
 - **Light loads:** dumbbells 2–10 kg per hand; the weight list stops at 10 kg. No single-heavy-dumbbell exercises, and no weight added to bodyweight exercises.
-- **Higher reps, slow tempo:** 10–20 reps with a 3-second lowering on most moves.
+- **Higher reps, slow tempo:** 10–20 reps with a controlled lowering.
 - **Effort:** every set ends with 2–3 reps in reserve; never to failure. A set only counts towards progressing when it ends at RIR 2 or more.
 - **Progression:** reps first, then technique (slower lowering, pauses, 1.5 reps, one side at a time) before any weight increase. No drop sets or rest-pause.
 - **Days:**
-  - **A — Legs, back and core:** goblet box squat, kneeling band lat pulldown, DB Romanian deadlift, incline push-up, DB hip thrust, dead bug
-  - **B — Single-leg strength and posture:** reverse lunge, one-arm DB row, seated DB shoulder press, bench step-up, band face pull, Pallof press
-  - **C — Glutes, upper body and arms:** Bulgarian split squat, incline DB press, single-leg hamstring bridge, incline prone row, lateral raise, curl + triceps superset
+  - **A — Glutes and quads:** hip thrust, goblet box squat, Bulgarian split squat, side-lying hip abduction, glute kickback, reverse crunch
+  - **B — Upper body, arms and core:** band lat pulldown, one-arm DB row, incline DB press, lateral raise, face pull, band triceps pushdown, dead bug
+  - **C — Glutes and hamstrings:** Romanian deadlift, hip thrust (paused), step-up, single-leg hamstring bridge, side-lying hip abduction, Pallof press
 - Deload every 6th week (half the sets, same weights).
+- Walking (8,000–12,000 steps), nutrition (≈1,900–2,000 kcal on training days, 110–120 g protein) and 4-weekly measurements come from her plan and are listed in PROGRAM.md; the app doesn't track them yet.
 
 If she is pregnant or postpartum, has pain, or has a medical condition, check with a doctor or physiotherapist before starting, and skip or swap anything that doesn't feel right.
 

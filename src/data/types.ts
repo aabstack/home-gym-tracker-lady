@@ -9,7 +9,9 @@ export type Pattern =
   | 'hip'
   | 'core'
   | 'arms'
-  | 'shoulder_health';
+  | 'shoulder_health'
+  /** Glute isolation (abduction, kickbacks): swaps only with each other. */
+  | 'glute';
 
 export type LoadType = 'dumbbell' | 'bodyweight' | 'assisted' | 'band';
 

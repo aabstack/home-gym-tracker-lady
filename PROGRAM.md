@@ -2,8 +2,39 @@
 
 ## Who it's for
 - 29 years old, 62 kg, 160 cm. Trains at home 3×/week (Mon/Wed/Fri suggested, with ≥ 48 h between sessions).
-- **Goal:** get stronger, fitter and more toned, with better posture, **without heavy lifting**.
+- **Goal (from her own 16-week plan):** bigger, stronger glutes and thighs, a more defined waist and a toned belly, and leaner back and arms, **without heavy lifting**.
 - If you are pregnant or postpartum, have pain, or have a medical condition, check with a doctor or physiotherapist first, and skip or swap any exercise that doesn't feel right.
+
+## Structure (program v2)
+- **A — Glutes and quads:** hip thrust, goblet box squat, Bulgarian split squat, side-lying hip abduction, glute kickback, reverse crunch
+- **B — Upper body, arms and core:** band lat pulldown, one-arm row, incline press, lateral raise, face pull, band triceps pushdown, dead bug
+- **C — Glutes and hamstrings:** Romanian deadlift, hip thrust (with a pause), step-up, single-leg hamstring bridge, side-lying hip abduction, Pallof press
+- Lower body in 2 of every 3 sessions, hip thrusts twice per rotation, and glute-side (abduction) work twice.
+- Incline push-up, reverse lunge, seated shoulder press, prone row, incline curl and overhead triceps extension stay in the app as **swap options**.
+
+## From her gym plan to the home version
+Her 16-week plan was written for a commercial gym. Exercises that need machines or cables are replaced with home equivalents that train the same muscles:
+
+| Her plan (gym) | In the app (home) |
+| :--- | :--- |
+| Hip Thrust, Bulgarian Split Squat, Romanian Deadlift, Step-Up, Lateral Raise, Face Pull, Pallof Press, Dead Bug, Incline Chest Press | Same exercise (dumbbells, bench or band) |
+| Squat, Leg Press, Hack/Smith Squat | Goblet box squat, Bulgarian split squat |
+| Walking Lunges | Bench step-up (reverse lunge available as a swap) |
+| Leg Curl | Single-leg hamstring bridge (heel on bench) |
+| Leg Extension | Covered by squats, split squats and step-ups; no home equivalent added |
+| Hip Abduction machine | **Side-lying hip abduction** (band around the knees to progress) |
+| Glute Kickback (cable) | **Glute kickback on all fours** (band around the foot to progress) |
+| Lat Pulldown | Kneeling band lat pulldown |
+| Seated (cable) Row | One-arm bench-supported DB row |
+| Triceps Pushdown (cable) | **Band triceps pushdown** (band over the pull-up bar) |
+| Reverse Crunch | **Reverse crunch** |
+
+## Outside the gym sessions (from her plan)
+These belong to her plan rather than the app, and they matter as much as the workouts for a defined waist and leaner back and arms (fat can't be lost from one spot by training it; it comes from overall diet and activity):
+- Walk 8,000–12,000 steps a day; the two non-lifting days are walks plus 10 minutes of stretching.
+- About 1,900–2,000 kcal on training days and 1,800 on rest days, with 110–120 g of protein every day. Review after 3–4 weeks.
+- Sleep 7–9 hours.
+- Measure weight, waist, hips and thigh, and take front/side/back photos, every 4 weeks.
 
 ## Principles
 - **Light to moderate loads only.** Dumbbells go from 2 kg to 10 kg per hand (the app's weight list stops at 10 kg). There are no single-heavy-dumbbell exercises, and bodyweight exercises never have weight added by the app.
@@ -29,14 +60,14 @@ Move up one step at a time for an exercise, only after reaching the top of the r
 
 ```json
 {
-  "seedVersion": 1,
+  "seedVersion": 2,
   "warmup": [
-    { "id": "wu_pass_through", "name": "Band pass-throughs", "detail": "Wide grip, overhead to behind the hips", "dose": "×10" },
-    { "id": "wu_pull_apart", "name": "Band pull-aparts", "detail": "Arms straight, squeeze shoulder blades", "dose": "×15" },
-    { "id": "wu_scap_pullup", "name": "Scapular pull-ups", "detail": "Hang from rack bar, move shoulder blades only, arms straight (keep your feet on the floor for help if needed)", "dose": "×8" },
-    { "id": "wu_wgs", "name": "World's greatest stretch", "detail": "Lunge, elbow to instep, rotate open", "dose": "×3 / side" },
-    { "id": "wu_squat_bridge", "name": "Bodyweight squat + glute bridge", "detail": "Controlled, full range", "dose": "×10 each" },
-    { "id": "wu_ramp", "name": "Ramp-up set", "detail": "One light set of the first exercise at ~50% effort", "dose": "×1 set" }
+    {"id": "wu_pass_through", "name": "Band pass-throughs", "detail": "Wide grip, overhead to behind the hips", "dose": "×10"},
+    {"id": "wu_pull_apart", "name": "Band pull-aparts", "detail": "Arms straight, squeeze shoulder blades", "dose": "×15"},
+    {"id": "wu_scap_pullup", "name": "Scapular pull-ups", "detail": "Hang from rack bar, move shoulder blades only, arms straight (keep your feet on the floor for help if needed)", "dose": "×8"},
+    {"id": "wu_wgs", "name": "World's greatest stretch", "detail": "Lunge, elbow to instep, rotate open", "dose": "×3 / side"},
+    {"id": "wu_squat_bridge", "name": "Bodyweight squat + glute bridge", "detail": "Controlled, full range", "dose": "×10 each"},
+    {"id": "wu_ramp", "name": "Ramp-up set", "detail": "One light set of the first exercise at ~50% effort", "dose": "×1 set"}
   ],
   "exercises": [
     {
@@ -247,59 +278,103 @@ Move up one step at a time for an exercise, only after reaching the top of the r
       "setup": "Sit at the highest bench incline and hold one light dumbbell (3–8 kg) with both hands overhead.",
       "execution": "Lower the dumbbell behind your head to a comfortable stretch, keeping your elbows pointing forward. Extend fully without flaring your elbows.",
       "progression": "Add reps up to 3×15. Then hold 1.5 seconds in the stretch. Then add a 2-second squeeze at the top."
+    },
+    {
+      "id": "side_lying_hip_abduction",
+      "name": "Side-Lying Hip Abduction",
+      "targets": ["Glutes (side)", "Hips"],
+      "pattern": "glute",
+      "loadType": "bodyweight",
+      "perSide": true,
+      "setup": "Lie on your side on a mat with your legs straight and stacked, hips tipped slightly forward, and your head resting on your bottom arm. This replaces the gym's hip abduction machine.",
+      "execution": "Keeping your toes pointing forward (not up), lift your top leg to about 35–45°, leading with your heel. Pause, then lower slowly without letting your legs touch. Finish all reps, then switch sides.",
+      "progression": "Add reps up to 3×20. Then hold the top for 2 seconds. Then loop the yellow band around your knees (doubled up) for extra resistance."
+    },
+    {
+      "id": "glute_kickback",
+      "name": "Glute Kickback (on all fours)",
+      "targets": ["Glutes"],
+      "pattern": "glute",
+      "loadType": "bodyweight",
+      "perSide": true,
+      "setup": "Kneel on all fours on a mat with your hands under your shoulders and your knees under your hips. Brace your core so your back stays flat. This replaces the cable or machine kickback.",
+      "execution": "Kick one leg back and up until it is in line with your body, squeezing your glute hard at the top. Don't arch your lower back. Lower slowly until your knee is back under your hip, and repeat. Finish all reps, then switch sides.",
+      "progression": "Add reps up to 3×15 per leg. Then hold the top for 2 seconds. Then hook the yellow band around your working foot and hold the ends under your hands for resistance."
+    },
+    {
+      "id": "reverse_crunch",
+      "name": "Reverse Crunch",
+      "targets": ["Lower Abs", "Core"],
+      "pattern": "core",
+      "loadType": "bodyweight",
+      "perSide": false,
+      "setup": "Lie on your back on a mat with your arms by your sides, knees bent and feet just off the floor.",
+      "execution": "Breathe out and curl your knees towards your chest, rolling your hips slightly off the floor with your lower abs rather than momentum. Lower slowly until your feet almost touch the floor.",
+      "progression": "Add reps up to 3×15. Then slow the lowering to 3 seconds. Then do it lying on the flat bench, holding the bench behind your head, for a bigger range."
+    },
+    {
+      "id": "band_triceps_pushdown",
+      "name": "Band Triceps Pushdown",
+      "targets": ["Triceps"],
+      "pattern": "arms",
+      "loadType": "band",
+      "perSide": false,
+      "setup": "Loop the yellow band over the rack's pull-up bar. Stand facing it and hold one end in each hand at chest height, with your elbows pinned to your sides. This replaces the cable pushdown.",
+      "execution": "Keeping your elbows still, push your hands down until your arms are straight and squeeze the backs of your arms. Let your hands rise slowly back to chest height.",
+      "progression": "Stand a little further back for more tension. Then hold the bottom for 2 seconds. Then do one arm at a time."
     }
   ],
   "days": [
     {
       "id": "A",
       "name": "Full-Body A",
-      "focus": "Legs, back and core, light and controlled",
+      "focus": "Glutes and quads",
       "order": 1,
       "items": [
-        { "exerciseId": "goblet_box_squat", "sets": 3, "repMin": 12, "repMax": 15, "restSec": 75, "tempo": "3-1-1-0" },
-        { "exerciseId": "band_lat_pulldown", "sets": 3, "repMin": 12, "repMax": 15, "restSec": 60, "tempo": "2-0-1-1" },
-        { "exerciseId": "db_rdl", "sets": 3, "repMin": 12, "repMax": 15, "restSec": 75, "tempo": "3-1-1-0" },
-        { "exerciseId": "incline_push_up", "sets": 3, "repMin": 8, "repMax": 15, "restSec": 60, "tempo": "2-1-1-0" },
-        { "exerciseId": "db_hip_thrust", "sets": 3, "repMin": 15, "repMax": 20, "restSec": 60, "tempo": "2-0-1-2" },
-        { "exerciseId": "dead_bug", "sets": 2, "repMin": 8, "repMax": 10, "restSec": 45, "tempo": "2-1-2-0" }
+        {"exerciseId": "db_hip_thrust", "sets": 4, "repMin": 10, "repMax": 15, "restSec": 75, "tempo": "2-0-1-2"},
+        {"exerciseId": "goblet_box_squat", "sets": 3, "repMin": 10, "repMax": 15, "restSec": 75, "tempo": "3-1-1-0"},
+        {"exerciseId": "bulgarian_split_squat", "sets": 3, "repMin": 8, "repMax": 12, "restSec": 75, "tempo": "3-1-1-0"},
+        {"exerciseId": "side_lying_hip_abduction", "sets": 3, "repMin": 15, "repMax": 20, "restSec": 30, "tempo": "2-0-1-1"},
+        {"exerciseId": "glute_kickback", "sets": 2, "repMin": 12, "repMax": 15, "restSec": 30, "tempo": "2-0-1-1"},
+        {"exerciseId": "reverse_crunch", "sets": 3, "repMin": 10, "repMax": 12, "restSec": 45, "tempo": "2-0-1-1"}
       ]
     },
     {
       "id": "B",
       "name": "Full-Body B",
-      "focus": "Single-leg strength and posture",
+      "focus": "Upper body, arms and core",
       "order": 2,
       "items": [
-        { "exerciseId": "db_reverse_lunge", "sets": 3, "repMin": 10, "repMax": 12, "restSec": 75, "tempo": "2-1-1-0" },
-        { "exerciseId": "sa_db_row", "sets": 3, "repMin": 12, "repMax": 15, "restSec": 60, "tempo": "2-0-1-1" },
-        { "exerciseId": "seated_db_shoulder_press", "sets": 3, "repMin": 12, "repMax": 15, "restSec": 60, "tempo": "3-0-1-0" },
-        { "exerciseId": "bench_step_up", "sets": 3, "repMin": 10, "repMax": 12, "restSec": 60, "tempo": "2-0-1-1" },
-        { "exerciseId": "band_face_pull", "sets": 2, "repMin": 15, "repMax": 20, "restSec": 45, "tempo": "2-0-1-2" },
-        { "exerciseId": "band_pallof_press", "sets": 2, "repMin": 12, "repMax": 12, "restSec": 45, "tempo": "2-2-1-0" }
+        {"exerciseId": "band_lat_pulldown", "sets": 3, "repMin": 12, "repMax": 15, "restSec": 60, "tempo": "2-0-1-1"},
+        {"exerciseId": "sa_db_row", "sets": 3, "repMin": 12, "repMax": 15, "restSec": 60, "tempo": "2-0-1-1"},
+        {"exerciseId": "incline_db_press", "sets": 3, "repMin": 10, "repMax": 15, "restSec": 60, "tempo": "3-1-1-0"},
+        {"exerciseId": "lateral_raise", "sets": 2, "repMin": 12, "repMax": 15, "restSec": 45, "tempo": "2-0-1-1"},
+        {"exerciseId": "band_face_pull", "sets": 3, "repMin": 15, "repMax": 20, "restSec": 45, "tempo": "2-0-1-2"},
+        {"exerciseId": "band_triceps_pushdown", "sets": 3, "repMin": 12, "repMax": 15, "restSec": 45, "tempo": "2-0-1-1"},
+        {"exerciseId": "dead_bug", "sets": 3, "repMin": 8, "repMax": 10, "restSec": 45, "tempo": "2-1-2-0"}
       ]
     },
     {
       "id": "C",
       "name": "Full-Body C",
-      "focus": "Glutes, upper body and arms",
+      "focus": "Glutes and hamstrings",
       "order": 3,
       "items": [
-        { "exerciseId": "bulgarian_split_squat", "sets": 3, "repMin": 8, "repMax": 12, "restSec": 75, "tempo": "3-1-1-0" },
-        { "exerciseId": "incline_db_press", "sets": 3, "repMin": 12, "repMax": 15, "restSec": 60, "tempo": "3-1-1-0" },
-        { "exerciseId": "sl_hamstring_bridge", "sets": 3, "repMin": 10, "repMax": 15, "restSec": 60, "tempo": "3-0-1-1" },
-        { "exerciseId": "incline_prone_db_row", "sets": 3, "repMin": 12, "repMax": 15, "restSec": 60, "tempo": "2-0-1-2" },
-        { "exerciseId": "lateral_raise", "sets": 2, "repMin": 12, "repMax": 15, "restSec": 45, "tempo": "2-0-1-1" },
-        { "exerciseId": "incline_db_curl", "sets": 2, "repMin": 12, "repMax": 15, "restSec": 0, "tempo": "3-0-1-0", "supersetGroup": "C-arms" },
-        { "exerciseId": "overhead_db_triceps_ext", "sets": 2, "repMin": 12, "repMax": 15, "restSec": 60, "tempo": "3-0-1-0", "supersetGroup": "C-arms" }
+        {"exerciseId": "db_rdl", "sets": 3, "repMin": 10, "repMax": 15, "restSec": 75, "tempo": "3-1-1-0"},
+        {"exerciseId": "db_hip_thrust", "sets": 3, "repMin": 12, "repMax": 15, "restSec": 60, "tempo": "2-1-1-2"},
+        {"exerciseId": "bench_step_up", "sets": 3, "repMin": 10, "repMax": 12, "restSec": 60, "tempo": "2-0-1-1"},
+        {"exerciseId": "sl_hamstring_bridge", "sets": 3, "repMin": 10, "repMax": 15, "restSec": 60, "tempo": "3-0-1-1"},
+        {"exerciseId": "side_lying_hip_abduction", "sets": 2, "repMin": 15, "repMax": 20, "restSec": 30, "tempo": "2-0-1-1"},
+        {"exerciseId": "band_pallof_press", "sets": 3, "repMin": 12, "repMax": 12, "restSec": 45, "tempo": "2-2-1-0"}
       ]
     }
   ],
   "progressionLadder": [
-    { "id": "reps", "label": "Add reps to top of range" },
-    { "id": "tempo", "label": "Tempo: 3–4 s lowering" },
-    { "id": "pause", "label": "Pause 1–2 s in the stretch" },
-    { "id": "1.5 reps", "label": "1.5 reps" },
-    { "id": "unilateral", "label": "One side at a time" }
+    {"id": "reps", "label": "Add reps to top of range"},
+    {"id": "tempo", "label": "Tempo: 3–4 s lowering"},
+    {"id": "pause", "label": "Pause 1–2 s in the stretch"},
+    {"id": "1.5 reps", "label": "1.5 reps"},
+    {"id": "unilateral", "label": "One side at a time"}
   ],
   "defaults": {
     "dumbbellWeightsKg": [2, 3, 4, 5, 6, 7, 8, 9, 10],
