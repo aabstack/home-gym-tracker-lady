@@ -1,0 +1,9 @@
+node_modules
+dist
+dev-dist
+coverage
+*.local
+.DS_Store
+
+# Local tooling
+.claude/

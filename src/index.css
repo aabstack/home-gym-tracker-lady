@@ -1,0 +1,135 @@
+@import 'tailwindcss';
+
+/* Colour tokens from DESIGN.md. Dark by default; light follows prefers-color-scheme. */
+:root {
+  --bg: #0e0f12;
+  --surface: #17191e;
+  --raised: #20232a;
+  --line: #2c3039;
+  --text: #f2f3f5;
+  --muted: #a3a8b3;
+  --accent: #fb7185;
+  --on-accent: #0e0f12;
+  --day-a: #60a5fa;
+  --day-b: #f59e0b;
+  --day-c: #c084fc;
+  --warn: #fbbf24;
+  --danger: #f87171;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f4f5f7;
+    --surface: #ffffff;
+    --raised: #e8eaee;
+    --line: #d5d8de;
+    --text: #111318;
+    --muted: #4f5561;
+    --accent: #be123c;
+    --on-accent: #ffffff;
+    --day-a: #1d4ed8;
+    --day-b: #b45309;
+    --day-c: #7e22ce;
+    --warn: #a16207;
+    --danger: #b91c1c;
+    color-scheme: light;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-raised: var(--raised);
+  --color-line: var(--line);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-day-a: var(--day-a);
+  --color-day-b: var(--day-b);
+  --color-day-c: var(--day-c);
+  --color-warn: var(--warn);
+  --color-danger: var(--danger);
+  --text-label: 13px;
+  --text-body: 16px;
+  --text-input: 22px;
+  --text-timer: 56px;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    sans-serif;
+  font-size: 16px;
+  line-height: 1.4;
+  overscroll-behavior-y: contain;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+button,
+[role='button'] {
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@keyframes pulse-soft {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+.animate-pulse-soft {
+  animation: pulse-soft 0.8s ease-in-out infinite;
+}
+
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+.animate-sheet {
+  animation: sheet-up 180ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-sheet,
+  .animate-pulse-soft {
+    animation: none;
+  }
+}
