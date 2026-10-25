@@ -68,6 +68,29 @@ beforeEach(async () => {
     { key: 'wakeLock', value: false },
     { key: 'dumbbellWeightsKg', value: [5, 10, 15] },
   ]);
+  await db.bodyChecks.bulkAdd([
+    {
+      id: 'c1',
+      date: '2026-09-26',
+      source: 'InBody 770',
+      weightKg: 63.5,
+      bodyFatPct: 30.2,
+      createdAt: 1,
+    },
+    {
+      id: 'c2',
+      date: '2026-10-24',
+      weightKg: 62.7,
+      waistCm: 79,
+      hipsCm: 99,
+      thighCm: 57,
+      createdAt: 2,
+    },
+  ]);
+  await db.dailyLogs.bulkAdd([
+    { date: '2026-10-24', steps: 9500, proteinG: 112, updatedAt: 3 },
+    { date: '2026-10-25', steps: 4000, updatedAt: 4 },
+  ]);
 });
 
 afterEach(async () => {
@@ -81,6 +104,8 @@ async function snapshot(d: GymDB) {
     sessions: by(await d.sessions.toArray()),
     setLogs: by(await d.setLogs.toArray()),
     settings: by(await d.settings.toArray()),
+    bodyChecks: by(await d.bodyChecks.toArray()),
+    dailyLogs: (await d.dailyLogs.toArray()).sort((x, y) => x.date.localeCompare(y.date)),
   };
 }
 
@@ -102,6 +127,8 @@ describe('backup', () => {
     expect(parsed.ok).toBe(true);
     if (!parsed.ok) return;
     expect(parsed.counts).toMatchObject({
+      bodyChecks: 2,
+      dailyLogs: 2,
       sessions: 2,
       setLogs: 4,
       settings: 2,
@@ -208,5 +235,50 @@ describe('CSV export', () => {
     expect(csvEscape('a\nb')).toBe('"a\nb"');
     expect(csvEscape(null)).toBe('');
     expect(csvEscape(3)).toBe('3');
+  });
+});
+
+describe('body tracking in backups', () => {
+  it('delete all clears check-ins and daily logs too', async () => {
+    await deleteAllData(db);
+    expect(await db.bodyChecks.count()).toBe(0);
+    expect(await db.dailyLogs.count()).toBe(0);
+  });
+
+  it('older backups without body data still import', () => {
+    const r = parseBackup(
+      JSON.stringify({
+        app: 'home-gym-tracker-lady',
+        formatVersion: 1,
+        sessions: [],
+        setLogs: [],
+        settings: [],
+      }),
+    );
+    expect(r.ok && r.data.bodyChecks).toEqual([]);
+    expect(r.ok && r.counts.dailyLogs).toBe(0);
+  });
+
+  it('rejects malformed check-ins and daily logs', () => {
+    const base = {
+      app: 'home-gym-tracker-lady',
+      formatVersion: 1,
+      sessions: [],
+      setLogs: [],
+      settings: [],
+    };
+    expect(parseBackup(JSON.stringify({ ...base, bodyChecks: [{ id: 1 }] })).ok).toBe(false);
+    expect(parseBackup(JSON.stringify({ ...base, bodyChecks: {} })).ok).toBe(false);
+    expect(parseBackup(JSON.stringify({ ...base, dailyLogs: [{ steps: 3 }] })).ok).toBe(false);
+    expect(parseBackup(JSON.stringify({ ...base, dailyLogs: 'x' })).ok).toBe(false);
+  });
+
+  it('merge adds check-ins and daily logs', async () => {
+    const backup = await exportBackup(db);
+    await deleteAllData(db);
+    await db.bodyChecks.add({ id: 'local', date: '2026-10-01', weightKg: 63, createdAt: 9 });
+    await importBackup(backup, 'merge', db);
+    expect(await db.bodyChecks.count()).toBe(3);
+    expect(await db.dailyLogs.count()).toBe(2);
   });
 });

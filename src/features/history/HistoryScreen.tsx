@@ -3,7 +3,6 @@ import {
   eachDayOfInterval,
   endOfMonth,
   endOfWeek,
-  format,
   isSameDay,
   isSameMonth,
   startOfMonth,
@@ -20,14 +19,19 @@ import { PageHeader } from '../../components/PageHeader';
 import { Segmented } from '../../components/Segmented';
 import { db } from '../../data/db';
 import type { Session } from '../../data/types';
-import { formatDuration } from '../../domain/format';
+import { useI18n } from '../../i18n/i18n';
 
 type View = 'list' | 'calendar';
 
 export function HistoryScreen() {
-  const [view, setView] = useState<View>(
-    () => (sessionStorage.getItem('historyView') as View) || 'list',
-  );
+  const { t } = useI18n();
+  const [view, setView] = useState<View>(() => {
+    try {
+      return (sessionStorage.getItem('historyView') as View) || 'list';
+    } catch {
+      return 'list';
+    }
+  });
   const data = useLiveQuery(async () => {
     const [sessions, logs] = await Promise.all([db.sessions.toArray(), db.setLogs.toArray()]);
     const counts = new Map<string, number>();
@@ -49,23 +53,23 @@ export function HistoryScreen() {
 
   return (
     <div>
-      <PageHeader title="History" />
+      <PageHeader title={t('history.title')} />
       <div className="px-3">
         <Segmented
-          label="History view"
+          label={t('history.view')}
           value={view}
           onChange={changeView}
           options={[
-            { value: 'list', label: 'List' },
-            { value: 'calendar', label: 'Calendar' },
+            { value: 'list', label: t('history.list') },
+            { value: 'calendar', label: t('history.calendar') },
           ]}
         />
       </div>
       {data && data.completed.length === 0 && (
         <div className="px-6 py-12 text-center text-muted">
           <Icon name="history" size={40} className="mx-auto mb-3" />
-          <p className="font-semibold text-text">No workouts yet</p>
-          <p>Finished sessions will appear here.</p>
+          <p className="font-semibold text-text">{t('history.empty')}</p>
+          <p>{t('history.emptyHint')}</p>
         </div>
       )}
       {data && data.completed.length > 0 && view === 'list' && (
@@ -85,6 +89,8 @@ export function HistoryScreen() {
 }
 
 function SessionRow({ session, sets }: { session: Session; sets: number }) {
+  const i18n = useI18n();
+  const { t } = i18n;
   return (
     <Link
       to={`/history/${session.id}`}
@@ -92,11 +98,14 @@ function SessionRow({ session, sets }: { session: Session; sets: number }) {
     >
       <DayBadge day={session.dayId} />
       <div className="min-w-0 flex-1">
-        <div className="font-semibold">{format(session.startedAt, 'EEE d MMM yyyy')}</div>
+        <div className="font-semibold">{i18n.date(session.startedAt, 'EEE d MMM yyyy')}</div>
         <div className="num text-label text-muted">
-          Day {session.dayId} ·{' '}
-          {formatDuration((session.endedAt ?? session.startedAt) - session.startedAt)} · {sets} sets
-          {session.isDeload ? ' · deload' : ''}
+          {t('history.rowMeta', {
+            d: session.dayId,
+            dur: i18n.duration((session.endedAt ?? session.startedAt) - session.startedAt),
+            n: sets,
+          })}
+          {session.isDeload ? ` · ${t('history.deload')}` : ''}
         </div>
       </div>
       <Icon name="forward" className="text-muted" />
@@ -105,6 +114,8 @@ function SessionRow({ session, sets }: { session: Session; sets: number }) {
 }
 
 function CalendarView({ sessions, counts }: { sessions: Session[]; counts: Map<string, number> }) {
+  const i18n = useI18n();
+  const { t } = i18n;
   const [month, setMonth] = useState(() => startOfMonth(new Date()));
   const [selected, setSelected] = useState<Date | null>(null);
   const days = eachDayOfInterval({
@@ -122,26 +133,28 @@ function CalendarView({ sessions, counts }: { sessions: Session[]; counts: Map<s
             type="button"
             onClick={() => setMonth((m) => addMonths(m, -1))}
             className="flex h-12 w-12 items-center justify-center rounded-full"
-            aria-label="Previous month"
+            aria-label={t('history.prevMonth')}
           >
             <Icon name="back" />
           </button>
-          <div className="font-semibold">{format(month, 'MMMM yyyy')}</div>
+          <div className="font-semibold">{i18n.date(month, 'MMMM yyyy')}</div>
           <button
             type="button"
             onClick={() => setMonth((m) => addMonths(m, 1))}
             className="flex h-12 w-12 items-center justify-center rounded-full"
-            aria-label="Next month"
+            aria-label={t('history.nextMonth')}
           >
             <Icon name="forward" />
           </button>
         </div>
         <div className="grid grid-cols-7 text-center text-label text-muted" aria-hidden>
-          {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
-            <div key={i} className="py-1">
-              {d}
-            </div>
-          ))}
+          {t('history.weekdays')
+            .split(',')
+            .map((d, i) => (
+              <div key={i} className="py-1">
+                {d}
+              </div>
+            ))}
         </div>
         <div className="grid grid-cols-7 gap-0.5">
           {days.map((d) => {
@@ -153,10 +166,10 @@ function CalendarView({ sessions, counts }: { sessions: Session[]; counts: Map<s
                 key={d.toISOString()}
                 type="button"
                 onClick={() => setSelected(d)}
-                aria-label={`${format(d, 'd MMMM')}${list.length ? `, ${list.map((s) => `day ${s.dayId}`).join(', ')}` : ''}`}
+                aria-label={`${i18n.date(d, 'd MMMM')}${list.length ? `, ${list.map((s) => t('day.label', { d: s.dayId })).join(', ')}` : ''}`}
                 className={`flex h-12 flex-col items-center justify-center rounded-xl ${isSel ? 'bg-raised' : ''} ${inMonth ? '' : 'opacity-35'} ${isSameDay(d, new Date()) ? 'font-bold text-accent' : ''}`}
               >
-                <span className="num text-label">{format(d, 'd')}</span>
+                <span className="num text-label">{i18n.date(d, 'd')}</span>
                 <span className="flex h-2 gap-0.5">
                   {list.map((s) => (
                     <span key={s.id} className={`h-2 w-2 rounded-full ${DAY_BG[s.dayId]}`} />
@@ -169,7 +182,7 @@ function CalendarView({ sessions, counts }: { sessions: Session[]; counts: Map<s
         <div className="mt-2 flex justify-center gap-4 text-label text-muted">
           {(['A', 'B', 'C'] as const).map((d) => (
             <span key={d} className="flex items-center gap-1">
-              <span className={`h-2.5 w-2.5 rounded-full ${DAY_BG[d]}`} /> Day {d}
+              <span className={`h-2.5 w-2.5 rounded-full ${DAY_BG[d]}`} /> {t('day.label', { d })}
             </span>
           ))}
         </div>
@@ -177,7 +190,9 @@ function CalendarView({ sessions, counts }: { sessions: Session[]; counts: Map<s
       {selected && (
         <div className="mt-3 flex flex-col gap-2">
           {selectedSessions.length === 0 ? (
-            <p className="text-center text-muted">No workout on {format(selected, 'EEE d MMM')}.</p>
+            <p className="text-center text-muted">
+              {t('history.noWorkoutOn', { date: i18n.date(selected, 'EEE d MMM') })}
+            </p>
           ) : (
             selectedSessions.map((s) => (
               <SessionRow key={s.id} session={s} sets={counts.get(s.id) ?? 0} />

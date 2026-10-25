@@ -1,12 +1,11 @@
-import { format } from 'date-fns';
 import { Sheet } from '../../components/Sheet';
 import type { HistoryEntry } from '../../data/repo';
 import type { Exercise, SessionItem } from '../../data/types';
-import { formatLoad, formatPrescription, formatRir, tempoToWords } from '../../domain/format';
 import { topSet } from '../../domain/stats';
 import { programTempo } from './demos';
 import { ExerciseAnimation } from './ExerciseAnimation';
 import { WatchDemo } from './WatchDemo';
+import { useI18n } from '../../i18n/i18n';
 
 export function ExerciseGuideSheet({
   exercise,
@@ -19,45 +18,53 @@ export function ExerciseGuideSheet({
   history?: HistoryEntry[];
   onClose: () => void;
 }) {
+  const i18n = useI18n();
+  const { t } = i18n;
   return (
-    <Sheet open={exercise !== null} onClose={onClose} title={exercise?.name ?? ''}>
+    <Sheet open={exercise !== null} onClose={onClose} title={exercise ? i18n.exName(exercise) : ''}>
       {exercise && (
         <div className="flex flex-col gap-4">
           <ExerciseAnimation
             key={exercise.id}
             exerciseId={exercise.id}
-            name={exercise.name}
+            name={i18n.exName(exercise)}
             tempo={item?.tempo ?? programTempo(exercise.id)}
           />
           <WatchDemo name={exercise.name} />
           <div>
-            <p className="text-muted">{exercise.targets.join(' · ')}</p>
+            <p className="text-muted">{i18n.muscles(exercise.targets)}</p>
             {item && (
               <>
-                <p className="num mt-1">{formatPrescription(item, exercise.perSide)}</p>
-                <p className="mt-1 text-label text-muted">Tempo: {tempoToWords(item.tempo)}</p>
+                <p className="num mt-1">{i18n.prescription(item, exercise.perSide)}</p>
+                <p className="mt-1 text-label text-muted">
+                  {t('guide.tempo', { words: i18n.tempoWords(item.tempo) })}
+                </p>
               </>
             )}
-            {exercise.perSide && <p className="mt-1 text-label text-muted">Reps are per side.</p>}
+            {exercise.perSide && <p className="mt-1 text-label text-muted">{t('guide.perSide')}</p>}
           </div>
-          <GuideSection title="Setup" text={exercise.setup} />
-          <GuideSection title="Execution" text={exercise.execution} />
-          <GuideSection title="Progression" text={exercise.progression} />
+          <GuideSection title={t('guide.setup')} text={i18n.exText(exercise, 'setup')} />
+          <GuideSection title={t('guide.execution')} text={i18n.exText(exercise, 'execution')} />
+          <GuideSection
+            title={t('guide.progression')}
+            text={i18n.exText(exercise, 'progression')}
+          />
           <section>
             <h3 className="mb-1 text-label font-semibold uppercase tracking-wide text-muted">
-              Recent top sets
+              {t('guide.recent')}
             </h3>
             {history && history.length > 0 ? (
               <ul className="divide-y divide-line rounded-2xl bg-raised px-3">
                 {history.slice(0, 5).map((h) => {
-                  const t = topSet(h.sets);
+                  const top = topSet(h.sets);
                   return (
                     <li key={h.session.id} className="num flex justify-between py-2">
-                      <span className="text-muted">{format(h.session.startedAt, 'EEE d MMM')}</span>
-                      {t && (
+                      <span className="text-muted">
+                        {i18n.date(h.session.startedAt, 'EEE d MMM')}
+                      </span>
+                      {top && (
                         <span>
-                          {formatLoad(t, exercise.loadType)} × {t.reps}{' '}
-                          <span className="text-muted">@ RIR {formatRir(t.rir)}</span>
+                          {i18n.load(top, exercise.loadType)} × {top.reps}
                         </span>
                       )}
                     </li>
@@ -65,7 +72,7 @@ export function ExerciseGuideSheet({
                 })}
               </ul>
             ) : (
-              <p className="text-muted">No history yet.</p>
+              <p className="text-muted">{t('guide.noHistory')}</p>
             )}
           </section>
         </div>

@@ -23,10 +23,15 @@ const PATHS = {
   play: 'M8 5l11 7-11 7z',
   pause: 'M9 5v14M15 5v14',
   external: 'M14 4h6v6M20 4l-9 9M18 14v6H4V6h6',
+  body: 'M12 6a2 2 0 100-4 2 2 0 000 4zM6 9h12M12 9v13M8.5 22l3.5-8 3.5 8',
+  scale: 'M4 7h16l-2 13H6L4 7zM9 7a3 3 0 016 0M12 11l2 3',
   bell: 'M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0',
 } as const;
 
 export type IconName = keyof typeof PATHS;
+
+/** Arrows that point "back" or "forward" flip in right-to-left languages. */
+const MIRRORED = new Set<IconName>(['back', 'forward', 'external']);
 
 export function Icon({
   name,
@@ -48,7 +53,7 @@ export function Icon({
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden
-      className={`shrink-0 ${className}`}
+      className={`shrink-0 ${MIRRORED.has(name) ? 'rtl:-scale-x-100' : ''} ${className}`}
     >
       <path d={PATHS[name]} />
     </svg>

@@ -10,6 +10,7 @@ import {
 } from '../../domain/figure';
 import type { Step } from '../../domain/figure';
 import { bendsFor, DEMOS, timelineFor, type Demo, type Prop } from './demos';
+import { useI18n } from '../../i18n/i18n';
 
 function prefersReducedMotion() {
   try {
@@ -45,6 +46,8 @@ export function AnimationPlayer({
   steps: Step[];
   name: string;
 }) {
+  const i18n = useI18n();
+  const tr = i18n.t;
   const [playing, setPlaying] = useState(() => !prefersReducedMotion());
   const [t, setT] = useState(0);
   const tRef = useRef(0);
@@ -76,25 +79,29 @@ export function AnimationPlayer({
         type="button"
         onClick={() => setPlaying((p) => !p)}
         className="relative block w-full overflow-hidden rounded-2xl bg-raised"
-        aria-label={`${name} animation. ${playing ? 'Tap to pause' : 'Tap to play'}`}
+        aria-label={tr('anim.aria', {
+          name,
+          action: tr(playing ? 'anim.tapPause' : 'anim.tapPlay'),
+        })}
       >
         <svg viewBox={demo.viewBox} className="block h-auto w-full" role="img" aria-hidden>
           <Figure demo={demo} sk={sk} />
         </svg>
         {playing ? (
-          <span className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-bg/70 text-muted">
+          <span className="absolute end-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-bg/70 text-muted">
             <Icon name="pause" size={16} />
           </span>
         ) : (
           <span className="absolute inset-x-0 bottom-3 mx-auto flex w-max items-center gap-1 rounded-full bg-bg/80 px-3 py-1.5 text-label font-semibold">
-            <Icon name="play" size={16} className="text-accent" /> Tap to play
+            <Icon name="play" size={16} className="text-accent" /> {tr('anim.tapPlay')}
           </span>
         )}
       </button>
       <figcaption className="num mt-2 flex items-center justify-between text-label" aria-live="off">
-        <span className="font-semibold">{s.step.label}</span>
+        <span className="font-semibold">{i18n.phase(s.step.label)}</span>
         <span className="text-muted">
-          {s.step.from === s.step.to ? 'hold' : 'move'} · {Math.max(0, s.remaining).toFixed(1)} s
+          {tr(s.step.from === s.step.to ? 'anim.hold' : 'anim.move')} ·{' '}
+          {tr('anim.sec', { n: Math.max(0, s.remaining).toFixed(1) })}
         </span>
       </figcaption>
     </figure>

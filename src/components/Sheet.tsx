@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, type ReactNode } from 'react';
+import { useI18n } from '../i18n/i18n';
 import { Icon } from './Icon';
 
 /** Bottom sheet for secondary content. Closes on backdrop tap, Escape, or the close button. */
@@ -15,6 +16,7 @@ export function Sheet({
   children: ReactNode;
   footer?: ReactNode;
 }) {
+  const { t } = useI18n();
   const titleId = useId();
   const panel = useRef<HTMLDivElement>(null);
 
@@ -50,8 +52,8 @@ export function Sheet({
           <button
             type="button"
             onClick={onClose}
-            className="-mr-2 flex h-12 w-12 items-center justify-center rounded-full text-muted"
-            aria-label="Close"
+            className="-me-2 flex h-12 w-12 items-center justify-center rounded-full text-muted"
+            aria-label={t('common.close')}
           >
             <Icon name="close" />
           </button>

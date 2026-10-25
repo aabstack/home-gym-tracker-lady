@@ -33,7 +33,8 @@ Read these before writing code:
 src/
   data/        program.seed.json (from PROGRAM.md), db.ts (Dexie schema), seed.ts
   domain/      pure logic: rotation.ts, progression.ts, deload.ts, stats.ts (unit-tested)
-  features/    today/, session/, history/, exercise/, settings/
+  features/    today/, session/, history/, exercise/, settings/, body/
+  i18n/        English/Arabic UI strings, Arabic program content, I18nProvider
   components/  shared UI (Button, Stepper, Timer, Sheet, Card)
   hooks/       useWakeLock, useRestTimer, useVibrate
   pwa/         manifest assets, icons
@@ -49,7 +50,8 @@ src/
 7. **Autosave every set immediately.** A session must survive the app being killed mid-workout and resume on reopen.
 8. **Mobile only.** Design for a 360×780 CSS-px viewport (S23). Desktop just centres the mobile layout at max-width 480px.
 9. Keep dependencies minimal. Ask before adding anything not listed above.
-10. After each phase in `TASKS.md`: run `npm run lint`, `npm test` and `npm run build`; fix failures before moving on.
+10. **Every user-visible string goes through `useI18n().t`** with a key in both `strings.en.ts` and `strings.ar.ts` (a test checks they match). Program text is translated in `content.ar.ts`; the seed JSON stays English. Use logical Tailwind classes (`ms-`, `pe-`, `start-`, `text-start`) so RTL works.
+11. After each phase in `TASKS.md`: run `npm run lint`, `npm test` and `npm run build`; fix failures before moving on.
 
 ## Definition of done
 All `TASKS.md` boxes ticked, tests passing, Lighthouse PWA "installable" check passing, and the app works with the phone in airplane mode.

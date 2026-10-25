@@ -1,7 +1,7 @@
 # PROGRAM.md — Training Program & Seed Data (Lady version)
 
 ## Who it's for
-- 29 years old, 62 kg, 160 cm. Trains at home 3×/week (Mon/Wed/Fri suggested, with ≥ 48 h between sessions).
+- 29 years old, 160 cm, 63.5 kg (InBody 770, 26 Sep 2026: body fat 30.2%, skeletal muscle 24.4 kg, BMR 1,328 kcal). Trains at home 3×/week (Mon/Wed/Fri suggested, with ≥ 48 h between sessions).
 - **Goal (from her own 16-week plan):** bigger, stronger glutes and thighs, a more defined waist and a toned belly, and leaner back and arms, **without heavy lifting**.
 - If you are pregnant or postpartum, have pain, or have a medical condition, check with a doctor or physiotherapist first, and skip or swap any exercise that doesn't feel right.
 

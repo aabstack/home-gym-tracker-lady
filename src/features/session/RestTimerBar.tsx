@@ -4,6 +4,7 @@ import type { AppSettings } from '../../data/settings';
 import { formatClock } from '../../domain/format';
 import { useNow } from '../../hooks/useNow';
 import { beep, notify, REST_DONE_VIBRATION, vibrate } from '../../hooks/useVibrate';
+import { useI18n } from '../../i18n/i18n';
 
 /** How long the "rest over" state stays up before the bar hides itself. */
 const DONE_LINGER_MS = 15_000;
@@ -27,6 +28,9 @@ export function RestTimerBar({
   onAdjust: (deltaSec: number) => void;
   onSkip: () => void;
 }) {
+  const { t } = useI18n();
+  const tRef = useRef(t);
+  tRef.current = t;
   const now = useNow(250);
   const remainingMs = rest.endAt - now;
   const done = remainingMs <= 0;
@@ -46,9 +50,10 @@ export function RestTimerBar({
       if (s.restVibrate) vibrate(REST_DONE_VIBRATION);
       if (s.restSound) beep();
       if (document.visibilityState === 'hidden') {
+        const tt = tRef.current;
         void notify(
-          'Rest over',
-          labelRef.current ? `Next: ${labelRef.current}` : 'Time for your next set',
+          tt('rest.notifTitle'),
+          labelRef.current ? tt('rest.next', { label: labelRef.current }) : tt('rest.notifBody'),
         );
       }
     };
@@ -82,7 +87,7 @@ export function RestTimerBar({
     <div
       className="pb-safe fixed inset-x-0 bottom-0 z-30 mx-auto max-w-[480px] border-t border-line bg-surface"
       role="timer"
-      aria-label="Rest timer"
+      aria-label={t('rest.aria')}
     >
       <div className="h-1.5 w-full bg-raised">
         <div
@@ -90,12 +95,12 @@ export function RestTimerBar({
           style={{ width: `${(done ? 1 : fraction) * 100}%` }}
         />
       </div>
-      <div className="flex items-center justify-between gap-2 px-3 pt-2">
+      <div dir="ltr" className="flex items-center justify-between gap-2 px-3 pt-2">
         <button
           type="button"
           className={btn}
           onClick={() => onAdjust(-15)}
-          aria-label="Subtract 15 seconds"
+          aria-label={t('rest.minus')}
         >
           −15
         </button>
@@ -103,22 +108,22 @@ export function RestTimerBar({
           className={`num text-timer font-bold leading-none ${done ? 'animate-pulse-soft text-accent' : ''}`}
           aria-live={done ? 'assertive' : 'off'}
         >
-          {done ? 'GO' : formatClock(remainingMs / 1000)}
+          {done ? t('rest.go') : formatClock(remainingMs / 1000)}
         </div>
         <button
           type="button"
           className={btn}
           onClick={() => onAdjust(15)}
-          aria-label="Add 15 seconds"
+          aria-label={t('rest.plus')}
         >
           +15
         </button>
         <button type="button" className={`${btn} text-muted`} onClick={onSkip}>
-          {done ? 'Hide' : 'Skip'}
+          {done ? t('rest.hide') : t('rest.skip')}
         </button>
       </div>
       <p className="truncate px-3 pb-2 pt-1 text-center text-label text-muted">
-        {nextLabel ? `Next: ${nextLabel}` : 'Last set done'}
+        {nextLabel ? t('rest.next', { label: nextLabel }) : t('rest.lastDone')}
       </p>
     </div>
   );

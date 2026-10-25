@@ -1,7 +1,7 @@
 # SPEC.md — Product Requirements
 
 ## 1. User & context
-- One user (lady version): 29 y/o, 62 kg, 160 cm, training at home 3×/week (Mon/Wed/Fri suggested, any non-consecutive days allowed). **No heavy lifting:** dumbbells capped at 10 kg per hand, higher reps, RIR 2–3, never to failure.
+- One user (lady version): 29 y/o, 160 cm, 63.5 kg (InBody 770, 26 Sep 2026: body fat 30.2%, skeletal muscle 24.4 kg), training at home 3×/week (Mon/Wed/Fri suggested, any non-consecutive days allowed). **No heavy lifting:** dumbbells capped at 10 kg per hand, higher reps, RIR 2–3, never to failure.
 - Equipment: power rack with pull-up bar, 20 kg adjustable dumbbell set (≈10 kg per hand as a pair, ≈18–20 kg on a single handle), adjustable bench, light (yellow) resistance band. The lady program uses the dumbbells at 2–10 kg per hand only.
 - Used mid-workout on a phone: sweaty hands, short attention, between sets. Speed of logging matters more than anything.
 

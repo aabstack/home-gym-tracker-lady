@@ -6,6 +6,7 @@ import type { Exercise, WarmupItem } from '../../data/types';
 import { programTempo, timelineFor, WARMUP_DEMOS } from '../exercise/demos';
 import { AnimationPlayer, ExerciseAnimation } from '../exercise/ExerciseAnimation';
 import { WatchDemo } from '../exercise/WatchDemo';
+import { useI18n } from '../../i18n/i18n';
 
 /** How-to for one warm-up item: animation(s), the cue, a video link and a done toggle. */
 export function WarmupGuideSheet({
@@ -22,6 +23,9 @@ export function WarmupGuideSheet({
   onToggle: () => void;
   onClose: () => void;
 }) {
+  const i18n = useI18n();
+  const { t } = i18n;
+  const text = item ? i18n.warmup(item) : null;
   const demos = useMemo(() => (item ? (WARMUP_DEMOS[item.id] ?? []) : []), [item]);
   const isRamp = item?.id === 'wu_ramp';
 
@@ -30,9 +34,9 @@ export function WarmupGuideSheet({
       open={item !== null}
       onClose={onClose}
       title={
-        item && (
+        text && (
           <>
-            {item.name} <span className="num font-normal text-muted">{item.dose}</span>
+            {text.name} <span className="num font-normal text-muted">{text.dose}</span>
           </>
         )
       }
@@ -46,10 +50,10 @@ export function WarmupGuideSheet({
           }}
         >
           {done ? (
-            'Mark as not done'
+            t('warmup.notDone')
           ) : (
             <>
-              <Icon name="check" /> Done
+              <Icon name="check" /> {t('common.done')}
             </>
           )}
         </Button>
@@ -59,31 +63,28 @@ export function WarmupGuideSheet({
         <div className="flex flex-col gap-4">
           {demos.map((d, i) => (
             <div key={i}>
-              {d.title && <h3 className="mb-1 font-semibold">{d.title}</h3>}
+              {d.title && <h3 className="mb-1 font-semibold">{i18n.phase(d.title)}</h3>}
               <AnimationPlayer
                 demo={d.demo}
                 steps={timelineFor(d.demo, '2-0-1-0')}
-                name={d.title ?? item.name}
+                name={d.title ? i18n.phase(d.title) : (text?.name ?? item.name)}
               />
             </div>
           ))}
           {isRamp && firstExercise && (
             <div>
-              <h3 className="mb-1 font-semibold">Today: {firstExercise.name}</h3>
+              <h3 className="mb-1 font-semibold">
+                {t('warmup.todayEx', { name: i18n.exName(firstExercise) })}
+              </h3>
               <ExerciseAnimation
                 exerciseId={firstExercise.id}
-                name={firstExercise.name}
+                name={i18n.exName(firstExercise)}
                 tempo={programTempo(firstExercise.id)}
               />
             </div>
           )}
-          <p>{item.detail}.</p>
-          {isRamp && (
-            <p className="text-label text-muted">
-              Do one easy set of your first exercise with a light load or extra band help, about
-              half your normal effort. It grooves the movement before your working sets.
-            </p>
-          )}
+          <p>{text?.detail}.</p>
+          {isRamp && <p className="text-label text-muted">{t('warmup.rampNote')}</p>}
           <WatchDemo
             name={isRamp && firstExercise ? firstExercise.name : item.name}
             suffix={isRamp ? 'exercise proper form' : 'warm up how to'}

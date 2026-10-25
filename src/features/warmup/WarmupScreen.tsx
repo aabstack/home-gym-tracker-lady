@@ -10,12 +10,15 @@ import { formatClock } from '../../domain/format';
 import { useNow } from '../../hooks/useNow';
 import { beep, vibrate, REST_DONE_VIBRATION } from '../../hooks/useVibrate';
 import { WarmupGuideSheet } from './WarmupGuideSheet';
+import { useI18n } from '../../i18n/i18n';
 
 const WARMUP_SECONDS = 4 * 60;
 const warmupOrder = (id: string) => programSeed.warmup.findIndex((w) => w.id === id);
 
 export function WarmupScreen() {
   const navigate = useNavigate();
+  const i18n = useI18n();
+  const { t } = i18n;
   const data = useLiveQuery(async () => {
     const session = (await getActiveSession()) ?? null;
     const firstId = session?.items[0]?.exerciseId;
@@ -63,17 +66,17 @@ export function WarmupScreen() {
           type="button"
           onClick={() => navigate('/')}
           className="flex h-12 w-12 items-center justify-center rounded-full text-muted"
-          aria-label="Back to Today"
+          aria-label={t('warmup.back')}
         >
           <Icon name="back" />
         </button>
-        <h1 className="text-2xl font-bold">Warm-up</h1>
+        <h1 className="text-2xl font-bold">{t('warmup.title')}</h1>
       </header>
 
       <div className="flex flex-col gap-3 px-3 pt-2">
         <div className="flex items-center justify-between rounded-2xl bg-surface px-4 py-3">
           <div>
-            <div className="text-label text-muted">Optional timer</div>
+            <div className="text-label text-muted">{t('warmup.timer')}</div>
             <div
               className={`num text-4xl font-bold ${remaining === 0 ? 'animate-pulse-soft text-accent' : ''}`}
               aria-live="polite"
@@ -82,15 +85,18 @@ export function WarmupScreen() {
             </div>
           </div>
           {endAt === null ? (
-            <Button onClick={() => setEndAt(Date.now() + WARMUP_SECONDS * 1000)}>Start 4:00</Button>
+            <Button onClick={() => setEndAt(Date.now() + WARMUP_SECONDS * 1000)}>
+              {t('warmup.start')}
+            </Button>
           ) : (
-            <Button onClick={() => setEndAt(null)}>Reset</Button>
+            <Button onClick={() => setEndAt(null)}>{t('common.reset')}</Button>
           )}
         </div>
 
         <ul className="flex flex-col gap-2">
           {items.map((w) => {
             const on = checked.has(w.id);
+            const text = i18n.warmup(w);
             return (
               <li
                 key={w.id}
@@ -101,7 +107,7 @@ export function WarmupScreen() {
                   role="checkbox"
                   aria-checked={on}
                   onClick={() => toggle(w.id)}
-                  className="flex min-h-16 min-w-0 flex-1 items-center gap-3 py-3 pl-4 pr-2 text-left"
+                  className="flex min-h-16 min-w-0 flex-1 items-center gap-3 py-3 ps-4 pe-2 text-start"
                 >
                   <span
                     className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 ${on ? 'border-accent bg-accent text-on-accent' : 'border-line'}`}
@@ -110,19 +116,19 @@ export function WarmupScreen() {
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block font-semibold">
-                      {w.name} <span className="num font-normal text-muted">{w.dose}</span>
+                      {text.name} <span className="num font-normal text-muted">{text.dose}</span>
                     </span>
-                    <span className="block text-label text-muted">{w.detail}</span>
+                    <span className="block text-label text-muted">{text.detail}</span>
                   </span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setGuideId(w.id)}
-                  aria-label={`How to do ${w.name}`}
-                  className="flex w-16 shrink-0 flex-col items-center justify-center gap-0.5 border-l border-line text-label font-semibold text-accent"
+                  aria-label={t('warmup.howAria', { name: text.name })}
+                  className="flex w-16 shrink-0 flex-col items-center justify-center gap-0.5 border-s border-line text-label font-semibold text-accent"
                 >
                   <Icon name="play" size={20} />
-                  How
+                  {t('warmup.how')}
                 </button>
               </li>
             );
@@ -140,10 +146,10 @@ export function WarmupScreen() {
 
       <div className="pb-safe sticky bottom-0 mt-auto flex gap-2 bg-gradient-to-t from-bg from-70% to-transparent px-3 pb-3 pt-6">
         <Button className="h-14 w-28" onClick={() => void proceed(false)}>
-          Skip
+          {t('warmup.skip')}
         </Button>
         <Button variant="primary" block className="flex-1" onClick={() => void proceed(true)}>
-          Done → Start Lifting
+          {t('warmup.done')}
         </Button>
       </div>
     </div>

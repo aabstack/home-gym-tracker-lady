@@ -161,3 +161,35 @@ export interface MetaRow {
   key: string;
   value: unknown;
 }
+
+// ---- Body tracking (user data) ----
+
+/** One body measurement check-in: an InBody scan, a tape measurement, or both. All optional. */
+export interface BodyCheck {
+  id: string;
+  /** yyyy-MM-dd (local date). */
+  date: string;
+  /** e.g. "InBody 770" or "Tape measure". */
+  source?: string;
+  weightKg?: number;
+  bodyFatPct?: number;
+  skeletalMuscleKg?: number;
+  fatMassKg?: number;
+  bmi?: number;
+  bmrKcal?: number;
+  waistHipRatio?: number;
+  waistCm?: number;
+  hipsCm?: number;
+  thighCm?: number;
+  notes?: string;
+  createdAt: number;
+}
+
+/** One row per day for the daily habits from her plan. */
+export interface DailyLog {
+  /** yyyy-MM-dd (local date), the primary key. */
+  date: string;
+  steps?: number;
+  proteinG?: number;
+  updatedAt: number;
+}

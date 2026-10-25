@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { UiContext, type ConfirmOptions, type SnackbarOptions } from './ui-context';
 import { Button } from './Button';
+import { useI18n } from '../i18n/i18n';
 
 export function UiProvider({ children }: { children: ReactNode }) {
   const [snack, setSnack] = useState<(SnackbarOptions & { id: number }) | null>(null);
@@ -8,6 +9,7 @@ export function UiProvider({ children }: { children: ReactNode }) {
     null,
   );
   const counter = useRef(0);
+  const { t } = useI18n();
 
   const snackbar = useCallback((o: SnackbarOptions) => {
     setSnack({ ...o, id: ++counter.current });
@@ -74,10 +76,10 @@ export function UiProvider({ children }: { children: ReactNode }) {
                 onClick={() => close(true)}
                 autoFocus
               >
-                {dialog.confirmLabel ?? 'OK'}
+                {dialog.confirmLabel ?? t('common.ok')}
               </Button>
               <Button block variant="secondary" onClick={() => close(false)}>
-                {dialog.cancelLabel ?? 'Cancel'}
+                {dialog.cancelLabel ?? t('common.cancel')}
               </Button>
             </div>
           </div>

@@ -1,5 +1,6 @@
 import { GymDB } from './db';
-import { ensureSeeded, programSeed } from './seed';
+import { ensureSeeded, ensureStarterProfile, programSeed } from './seed';
+import { STARTER_CHECK } from './profile.starter';
 import type { Session, SetLog } from './types';
 
 let db: GymDB;
@@ -84,5 +85,23 @@ describe('ensureSeeded', () => {
     const ladder = programSeed.progressionLadder.map((s) => s.id);
     expect(ladder).not.toContain('drop set');
     expect(ladder).not.toContain('rest-pause');
+  });
+
+  it('adds her starting InBody check-in exactly once', async () => {
+    expect(await ensureStarterProfile(db)).toBe(true);
+    expect(await db.bodyChecks.get(STARTER_CHECK.id)).toMatchObject({
+      weightKg: 63.5,
+      bodyFatPct: 30.2,
+    });
+    // Deleted later (or "Delete all data"): never re-added.
+    await db.bodyChecks.clear();
+    expect(await ensureStarterProfile(db)).toBe(false);
+    expect(await db.bodyChecks.count()).toBe(0);
+  });
+
+  it('does not add the starter check-in when she already has check-ins', async () => {
+    await db.bodyChecks.add({ id: 'mine', date: '2026-10-01', weightKg: 63, createdAt: 1 });
+    await ensureStarterProfile(db);
+    expect((await db.bodyChecks.toArray()).map((c) => c.id)).toEqual(['mine']);
   });
 });

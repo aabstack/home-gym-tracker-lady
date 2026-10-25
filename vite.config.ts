@@ -17,6 +17,8 @@ export default defineConfig({
     __APP_BUILD__: JSON.stringify(buildTime),
     __APP_COMMIT__: JSON.stringify(commit),
   },
+  // The Arabic program text lives in the main chunk so it works offline from the first paint.
+  build: { chunkSizeWarningLimit: 600 },
   plugins: [
     react(),
     tailwindcss(),

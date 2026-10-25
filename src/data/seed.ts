@@ -1,6 +1,7 @@
 import seedJson from './program.seed.json';
 import { db as defaultDb, SCHEMA_VERSION, type GymDB } from './db';
 import type { ProgramSeed } from './types';
+import { STARTER_CHECK } from './profile.starter';
 
 export const programSeed = seedJson as ProgramSeed;
 
@@ -24,6 +25,19 @@ export async function ensureSeeded(db: GymDB = defaultDb, seed: ProgramSeed = pr
       { key: 'seedVersion', value: seed.seedVersion },
       { key: 'schemaVersion', value: SCHEMA_VERSION },
     ]);
+    return true;
+  });
+}
+
+/**
+ * Adds her starting InBody check-in once. A meta flag records that it was applied, so deleting
+ * it (or "Delete all data") never brings it back.
+ */
+export async function ensureStarterProfile(db: GymDB = defaultDb) {
+  return db.transaction('rw', db.bodyChecks, db.meta, async () => {
+    if (await db.meta.get('starterProfile')) return false;
+    if ((await db.bodyChecks.count()) === 0) await db.bodyChecks.add(STARTER_CHECK);
+    await db.meta.put({ key: 'starterProfile', value: STARTER_CHECK.id });
     return true;
   });
 }

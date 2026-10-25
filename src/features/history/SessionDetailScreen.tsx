@@ -1,4 +1,3 @@
-import { format } from 'date-fns';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router';
@@ -10,13 +9,16 @@ import { useUi } from '../../components/ui-context';
 import { db } from '../../data/db';
 import { deleteSession, useExercises } from '../../data/repo';
 import type { Exercise, Rir, SetLog } from '../../data/types';
-import { formatDuration, formatKg, formatLoad, formatRir, roundKg } from '../../domain/format';
+import { formatKg, formatRir, roundKg } from '../../domain/format';
+import { useI18n } from '../../i18n/i18n';
 import { volume } from '../../domain/stats';
 
 export function SessionDetailScreen() {
   const { id = '' } = useParams();
   const navigate = useNavigate();
   const ui = useUi();
+  const i18n = useI18n();
+  const { t } = i18n;
   const exercises = useExercises();
   const session = useLiveQuery(async () => (await db.sessions.get(id)) ?? null, [id]);
   const logs = useLiveQuery(() => db.setLogs.where('sessionId').equals(id).toArray(), [id]);
@@ -39,9 +41,9 @@ export function SessionDetailScreen() {
 
   const remove = async () => {
     const ok = await ui.confirm({
-      title: 'Delete this session?',
-      message: `All ${logs.length} sets will be permanently deleted.`,
-      confirmLabel: 'Delete session',
+      title: t('detail.deleteTitle'),
+      message: t('detail.deleteMsg'),
+      confirmLabel: t('detail.deleteOk'),
       danger: true,
     });
     if (!ok) return;
@@ -56,37 +58,43 @@ export function SessionDetailScreen() {
           type="button"
           onClick={() => navigate('/history')}
           className="flex h-12 w-12 items-center justify-center rounded-full text-muted"
-          aria-label="Back to history"
+          aria-label={t('detail.back')}
         >
           <Icon name="back" />
         </button>
         <DayBadge day={session.dayId} />
         <div className="min-w-0 flex-1">
           <h1 className="truncate text-xl font-bold">
-            {format(session.startedAt, 'EEE d MMM yyyy')}
+            {i18n.date(session.startedAt, 'EEE d MMM yyyy')}
           </h1>
           <p className="num text-label text-muted">
-            {format(session.startedAt, 'HH:mm')} ·{' '}
-            {formatDuration((session.endedAt ?? session.startedAt) - session.startedAt)} · Week{' '}
-            {session.weekNumber}
-            {session.isDeload ? ' · deload' : ''}
+            {t('detail.meta', {
+              time: i18n.date(session.startedAt, 'HH:mm'),
+              dur: i18n.duration((session.endedAt ?? session.startedAt) - session.startedAt),
+              w: session.weekNumber,
+            })}
+            {session.isDeload ? ` · ${t('history.deload')}` : ''}
           </p>
         </div>
         <Button variant={editing ? 'primary' : 'secondary'} onClick={() => setEditing((e) => !e)}>
-          <Icon name={editing ? 'check' : 'edit'} size={18} /> {editing ? 'Done' : 'Edit'}
+          <Icon name={editing ? 'check' : 'edit'} size={18} />{' '}
+          {editing ? t('common.done') : t('common.edit')}
         </Button>
       </header>
 
       <div className="flex flex-col gap-3 px-3">
         <p className="num text-label text-muted">
-          {logs.length} sets · {Math.round(vol.weightedKg).toLocaleString()} kg volume
-          {vol.bodyweightReps ? ` · ${vol.bodyweightReps} BW reps` : ''}
-          {session.warmupDone ? ' · warm-up done' : ''}
+          {t('detail.summary', {
+            n: logs.length,
+            kg: Math.round(vol.weightedKg).toLocaleString('en'),
+          })}
+          {vol.bodyweightReps ? ` · ${t('detail.bwReps', { n: vol.bodyweightReps })}` : ''}
+          {session.warmupDone ? ` · ${t('detail.warmupDone')}` : ''}
         </p>
 
         {groups.map((g) => (
           <Card key={g.exId} className="p-3">
-            <h2 className="font-semibold">{g.ex?.name ?? g.exId}</h2>
+            <h2 className="font-semibold">{g.ex ? i18n.exName(g.ex) : g.exId}</h2>
             <ul className="mt-1 flex flex-col gap-1">
               {g.sets.map((s) =>
                 editing && g.ex ? (
@@ -95,10 +103,13 @@ export function SessionDetailScreen() {
                   <li key={s.id} className="num flex gap-3">
                     <span className="w-5 text-muted">{s.setIndex + 1}</span>
                     <span>
-                      {formatLoad(s, g.ex?.loadType)} × {s.reps}{' '}
-                      <span className="text-muted">@ RIR {formatRir(s.rir)}</span>
+                      {i18n.load(s, g.ex?.loadType)} × {s.reps}{' '}
+                      <span className="text-muted">· {t('fmt.rir', { r: formatRir(s.rir) })}</span>
                       {s.techniques.length > 0 && (
-                        <span className="text-label text-muted"> · {s.techniques.join(', ')}</span>
+                        <span className="text-label text-muted">
+                          {' '}
+                          · {s.techniques.map(i18n.technique).join('، ')}
+                        </span>
                       )}
                       {s.note && <span className="block text-label text-muted">{s.note}</span>}
                     </span>
@@ -112,7 +123,7 @@ export function SessionDetailScreen() {
         {editing ? (
           <Card className="p-3">
             <label className="block">
-              <span className="text-label text-muted">Notes</span>
+              <span className="text-label text-muted">{t('detail.notes')}</span>
               <textarea
                 defaultValue={session.notes ?? ''}
                 onBlur={(e) => void db.sessions.update(session.id, { notes: e.target.value })}
@@ -121,7 +132,7 @@ export function SessionDetailScreen() {
               />
             </label>
             <label className="mt-2 flex items-center justify-between">
-              <span>Bodyweight (kg)</span>
+              <span>{t('detail.bodyweight')}</span>
               <input
                 type="text"
                 inputMode="decimal"
@@ -132,11 +143,11 @@ export function SessionDetailScreen() {
                     bodyweightKg: e.target.value.trim() && n > 0 ? roundKg(n) : undefined,
                   });
                 }}
-                className="num h-12 w-28 rounded-xl bg-raised px-3 text-right outline-none"
+                className="num h-12 w-28 rounded-xl bg-raised px-3 text-end outline-none"
               />
             </label>
             <Button variant="danger" block className="mt-4" onClick={() => void remove()}>
-              <Icon name="trash" /> Delete session
+              <Icon name="trash" /> {t('detail.deleteOk')}
             </Button>
           </Card>
         ) : (
@@ -145,7 +156,7 @@ export function SessionDetailScreen() {
               {session.notes && <p className="whitespace-pre-wrap">{session.notes}</p>}
               {session.bodyweightKg !== undefined && (
                 <p className="text-label text-muted">
-                  Bodyweight: {formatKg(session.bodyweightKg)} kg
+                  {t('summary.bodyweight', { kg: formatKg(session.bodyweightKg) })}
                 </p>
               )}
             </Card>
@@ -158,6 +169,7 @@ export function SessionDetailScreen() {
 
 function EditableSet({ set, exercise }: { set: SetLog; exercise: Exercise }) {
   const ui = useUi();
+  const { t } = useI18n();
   const save = (patch: Partial<SetLog>) => void db.setLogs.update(set.id, patch);
   const num = (text: string) => {
     const n = Number(text.replace(',', '.'));
@@ -170,7 +182,7 @@ function EditableSet({ set, exercise }: { set: SetLog; exercise: Exercise }) {
       <span className="num w-5 text-muted">{set.setIndex + 1}</span>
       {exercise.loadType === 'dumbbell' ? (
         <input
-          aria-label={`Set ${set.setIndex + 1} weight kg`}
+          aria-label={t('set.weightAria', { n: set.setIndex + 1 })}
           className={`${input} w-20`}
           inputMode="decimal"
           defaultValue={set.weightKg ?? ''}
@@ -180,13 +192,13 @@ function EditableSet({ set, exercise }: { set: SetLog; exercise: Exercise }) {
           }}
         />
       ) : exercise.loadType === 'band' ? (
-        <span className="w-20 text-center text-muted">Band</span>
+        <span className="w-20 text-center text-muted">{t('fmt.band')}</span>
       ) : (
         <input
-          aria-label={`Set ${set.setIndex + 1} added kg`}
+          aria-label={t('set.loadAria', { n: set.setIndex + 1 })}
           className={`${input} w-20`}
           inputMode="decimal"
-          placeholder="BW"
+          placeholder="—"
           defaultValue={set.addedKg ?? ''}
           onBlur={(e) => {
             const n = num(e.target.value);
@@ -196,7 +208,7 @@ function EditableSet({ set, exercise }: { set: SetLog; exercise: Exercise }) {
       )}
       <span className="text-muted">×</span>
       <input
-        aria-label={`Set ${set.setIndex + 1} reps`}
+        aria-label={t('set.repsAria', { n: set.setIndex + 1 })}
         className={`${input} w-14`}
         inputMode="numeric"
         defaultValue={set.reps}
@@ -206,26 +218,26 @@ function EditableSet({ set, exercise }: { set: SetLog; exercise: Exercise }) {
         }}
       />
       <select
-        aria-label={`Set ${set.setIndex + 1} RIR`}
+        aria-label={t('opts.effort')}
         className="h-12 rounded-xl bg-raised px-2"
         defaultValue={set.rir}
         onChange={(e) => save({ rir: Number(e.target.value) as Rir })}
       >
         {[0, 1, 2, 3, 4].map((r) => (
           <option key={r} value={r}>
-            RIR {formatRir(r)}
+            {t('fmt.rir', { r: formatRir(r) })}
           </option>
         ))}
       </select>
       <button
         type="button"
-        aria-label={`Delete set ${set.setIndex + 1}`}
-        className="ml-auto flex h-12 w-12 items-center justify-center rounded-xl text-danger"
+        aria-label={t('detail.deleteSetAria', { n: set.setIndex + 1 })}
+        className="ms-auto flex h-12 w-12 items-center justify-center rounded-xl text-danger"
         onClick={() => {
           void db.setLogs.delete(set.id);
           ui.snackbar({
-            message: `Deleted set ${set.setIndex + 1}`,
-            actionLabel: 'Undo',
+            message: t('detail.deletedSet', { n: set.setIndex + 1 }),
+            actionLabel: t('common.undo'),
             onAction: () => void db.setLogs.put(set),
           });
         }}

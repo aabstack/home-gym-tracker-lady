@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
-import { ensureSeeded } from './data/seed';
+import { ensureSeeded, ensureStarterProfile } from './data/seed';
 import { registerPwa } from './pwa/register';
 import './index.css';
 
@@ -11,6 +11,7 @@ const root = createRoot(document.getElementById('root') as HTMLElement);
 void navigator.storage?.persist?.().catch(() => {});
 
 ensureSeeded()
+  .then(() => ensureStarterProfile())
   .then(() => {
     root.render(
       <StrictMode>

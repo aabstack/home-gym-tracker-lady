@@ -19,9 +19,12 @@ import { SummaryScreen } from './features/session/SummaryScreen';
 import { HistoryScreen } from './features/history/HistoryScreen';
 import { SessionDetailScreen } from './features/history/SessionDetailScreen';
 import { SettingsScreen } from './features/settings/SettingsScreen';
+import { I18nProvider } from './i18n/I18nProvider';
+import { useI18n } from './i18n/i18n';
 
 // Recharts is the heaviest dependency; keep it out of the start-up bundle.
 const ProgressScreen = lazy(() => import('./features/progress/ProgressScreen'));
+const BodyScreen = lazy(() => import('./features/body/BodyScreen'));
 
 function TabLayout() {
   return (
@@ -53,38 +56,49 @@ function ResumeOnLaunch() {
 }
 
 function Loading() {
-  return <div className="p-6 text-muted">Loading…</div>;
+  const { t } = useI18n();
+  return <div className="p-6 text-muted">{t('common.loading')}</div>;
 }
 
 export default function App() {
   return (
     <HashRouter>
-      <UiProvider>
-        <div className="mx-auto min-h-dvh max-w-[480px]">
-          <ResumeOnLaunch />
-          <UpdateToast />
-          <Routes>
-            <Route element={<TabLayout />}>
-              <Route index element={<TodayScreen />} />
-              <Route path="history" element={<HistoryScreen />} />
-              <Route path="history/:id" element={<SessionDetailScreen />} />
-              <Route
-                path="progress"
-                element={
-                  <Suspense fallback={<Loading />}>
-                    <ProgressScreen />
-                  </Suspense>
-                }
-              />
-              <Route path="settings" element={<SettingsScreen />} />
-            </Route>
-            <Route path="warmup" element={<WarmupScreen />} />
-            <Route path="session/:id" element={<SessionScreen />} />
-            <Route path="summary/:id" element={<SummaryScreen />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </div>
-      </UiProvider>
+      <I18nProvider>
+        <UiProvider>
+          <div className="mx-auto min-h-dvh max-w-[480px]">
+            <ResumeOnLaunch />
+            <UpdateToast />
+            <Routes>
+              <Route element={<TabLayout />}>
+                <Route index element={<TodayScreen />} />
+                <Route path="history" element={<HistoryScreen />} />
+                <Route path="history/:id" element={<SessionDetailScreen />} />
+                <Route
+                  path="progress"
+                  element={
+                    <Suspense fallback={<Loading />}>
+                      <ProgressScreen />
+                    </Suspense>
+                  }
+                />
+                <Route
+                  path="body"
+                  element={
+                    <Suspense fallback={<Loading />}>
+                      <BodyScreen />
+                    </Suspense>
+                  }
+                />
+                <Route path="settings" element={<SettingsScreen />} />
+              </Route>
+              <Route path="warmup" element={<WarmupScreen />} />
+              <Route path="session/:id" element={<SessionScreen />} />
+              <Route path="summary/:id" element={<SummaryScreen />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </div>
+        </UiProvider>
+      </I18nProvider>
     </HashRouter>
   );
 }

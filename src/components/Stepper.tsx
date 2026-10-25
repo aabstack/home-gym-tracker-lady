@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { useI18n } from '../i18n/i18n';
 import { Icon } from './Icon';
 
 /**
@@ -16,6 +17,7 @@ export function Stepper<T>({
   editText,
   className = '',
   disabled,
+  compact,
 }: {
   value: T;
   display: string;
@@ -27,7 +29,10 @@ export function Stepper<T>({
   label: string;
   className?: string;
   disabled?: boolean;
+  /** Narrower buttons and slightly smaller digits, for the one-line set row. */
+  compact?: boolean;
 }) {
+  const { t } = useI18n();
   const [editing, setEditing] = useState<string | null>(null);
   const cancelled = useRef(false);
 
@@ -40,11 +45,13 @@ export function Stepper<T>({
     setEditing(null);
   };
 
-  const btn =
-    'flex h-12 w-11 shrink-0 items-center justify-center rounded-xl bg-raised text-text active:opacity-60 disabled:opacity-30';
+  const btn = `flex h-12 ${compact ? 'w-10' : 'w-11'} shrink-0 items-center justify-center rounded-xl bg-raised text-text active:opacity-60 disabled:opacity-30`;
+  const valueSize = compact ? 'text-[20px]' : 'text-input';
 
   return (
+    // Numbers read left to right in Arabic too, so − stays on the left and + on the right.
     <div
+      dir="ltr"
       className={`flex min-w-0 items-center gap-0.5 ${className}`}
       role="group"
       aria-label={label}
@@ -52,7 +59,7 @@ export function Stepper<T>({
       <button
         type="button"
         className={btn}
-        aria-label={`Decrease ${label}`}
+        aria-label={t('stepper.dec', { label })}
         disabled={disabled}
         onClick={() => onChange(step(-1, value))}
       >
@@ -65,7 +72,7 @@ export function Stepper<T>({
           enterKeyHint="done"
           aria-label={label}
           disabled={disabled}
-          className="num h-12 w-full min-w-0 flex-1 rounded-lg bg-transparent text-center text-input font-semibold outline-none focus:bg-raised"
+          className={`num h-12 w-full min-w-0 flex-1 rounded-lg bg-transparent px-0 text-center ${valueSize} font-semibold outline-none focus:bg-raised`}
           value={editing ?? display}
           onFocus={(e) => {
             setEditing(editText ?? '');
@@ -82,14 +89,16 @@ export function Stepper<T>({
           }}
         />
       ) : (
-        <span className="num flex h-12 min-w-0 flex-1 items-center justify-center text-input font-semibold">
+        <span
+          className={`num flex h-12 min-w-0 flex-1 items-center justify-center ${valueSize} font-semibold`}
+        >
           {display}
         </span>
       )}
       <button
         type="button"
         className={btn}
-        aria-label={`Increase ${label}`}
+        aria-label={t('stepper.inc', { label })}
         disabled={disabled}
         onClick={() => onChange(step(1, value))}
       >

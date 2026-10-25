@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 import { db as defaultDb, type GymDB } from './db';
-import type { Session, SetLog, SettingRow } from './types';
+import type { BodyCheck, DailyLog, Session, SetLog, SettingRow } from './types';
 
 export const BACKUP_APP = 'home-gym-tracker-lady';
 export const BACKUP_FORMAT = 1;
@@ -13,12 +13,17 @@ export interface BackupFile {
   sessions: Session[];
   setLogs: SetLog[];
   settings: SettingRow[];
+  /** Added in schema v2; optional so older backups still import. */
+  bodyChecks?: BodyCheck[];
+  dailyLogs?: DailyLog[];
 }
 
 export interface BackupCounts {
   sessions: number;
   setLogs: number;
   settings: number;
+  bodyChecks: number;
+  dailyLogs: number;
   completedSessions: number;
   firstDate?: number;
   lastDate?: number;
@@ -34,10 +39,12 @@ export function backupFileName(date: Date | number = new Date()): string {
 }
 
 export async function exportBackup(db: GymDB = defaultDb): Promise<BackupFile> {
-  const [sessions, setLogs, settings, seed] = await Promise.all([
+  const [sessions, setLogs, settings, bodyChecks, dailyLogs, seed] = await Promise.all([
     db.sessions.toArray(),
     db.setLogs.toArray(),
     db.settings.toArray(),
+    db.bodyChecks.toArray(),
+    db.dailyLogs.toArray(),
     db.meta.get('seedVersion'),
   ]);
   return {
@@ -48,6 +55,8 @@ export async function exportBackup(db: GymDB = defaultDb): Promise<BackupFile> {
     sessions,
     setLogs,
     settings,
+    bodyChecks,
+    dailyLogs,
   };
 }
 
@@ -110,10 +119,26 @@ export function parseBackup(text: string): ParseResult {
     const s = raw.settings[i];
     if (!isObj(s) || !isStr(s.key)) return { ok: false, error: `settings[${i}] is invalid` };
   }
+  const checks: unknown[] = raw.bodyChecks === undefined ? [] : (raw.bodyChecks as unknown[]);
+  if (!Array.isArray(checks)) return { ok: false, error: 'bodyChecks is invalid' };
+  for (let i = 0; i < checks.length; i++) {
+    const c = checks[i];
+    if (!isObj(c) || !isStr(c.id) || !isStr(c.date)) {
+      return { ok: false, error: `bodyChecks[${i}] is invalid` };
+    }
+  }
+  const daily: unknown[] = raw.dailyLogs === undefined ? [] : (raw.dailyLogs as unknown[]);
+  if (!Array.isArray(daily)) return { ok: false, error: 'dailyLogs is invalid' };
+  for (let i = 0; i < daily.length; i++) {
+    const d = daily[i];
+    if (!isObj(d) || !isStr(d.date)) return { ok: false, error: `dailyLogs[${i}] is invalid` };
+  }
   const data = raw as unknown as BackupFile;
   const data2: BackupFile = {
     ...data,
     sessions: data.sessions.map((s) => ({ ...s, items: s.items ?? [] })),
+    bodyChecks: data.bodyChecks ?? [],
+    dailyLogs: data.dailyLogs ?? [],
   };
   const starts = data2.sessions.map((s) => s.startedAt);
   return {
@@ -123,6 +148,8 @@ export function parseBackup(text: string): ParseResult {
       sessions: data2.sessions.length,
       setLogs: data2.setLogs.length,
       settings: data2.settings.length,
+      bodyChecks: data2.bodyChecks?.length ?? 0,
+      dailyLogs: data2.dailyLogs?.length ?? 0,
       completedSessions: data2.sessions.filter((s) => s.endedAt !== undefined).length,
       firstDate: starts.length ? Math.min(...starts) : undefined,
       lastDate: starts.length ? Math.max(...starts) : undefined,
@@ -135,25 +162,31 @@ export function parseBackup(text: string): ParseResult {
  * Merge: add/overwrite sessions and sets by id; keep existing settings, add missing ones.
  */
 export async function importBackup(data: BackupFile, mode: ImportMode, db: GymDB = defaultDb) {
-  await db.transaction('rw', db.sessions, db.setLogs, db.settings, async () => {
+  const tables = [db.sessions, db.setLogs, db.settings, db.bodyChecks, db.dailyLogs];
+  await db.transaction('rw', tables, async () => {
     if (mode === 'replace') {
-      await Promise.all([db.sessions.clear(), db.setLogs.clear(), db.settings.clear()]);
+      await Promise.all(tables.map((t) => t.clear()));
       await db.sessions.bulkAdd(data.sessions);
       await db.setLogs.bulkAdd(data.setLogs);
       await db.settings.bulkAdd(data.settings);
+      await db.bodyChecks.bulkAdd(data.bodyChecks ?? []);
+      await db.dailyLogs.bulkAdd(data.dailyLogs ?? []);
       return;
     }
     await db.sessions.bulkPut(data.sessions);
     await db.setLogs.bulkPut(data.setLogs);
+    await db.bodyChecks.bulkPut(data.bodyChecks ?? []);
+    await db.dailyLogs.bulkPut(data.dailyLogs ?? []);
     const existing = new Set((await db.settings.toArray()).map((s) => s.key));
     await db.settings.bulkPut(data.settings.filter((s) => !existing.has(s.key)));
   });
 }
 
-/** Deletes all user data (sessions, sets, settings). Program seed is kept. */
+/** Deletes all user data (workouts, check-ins, daily logs, settings). Program seed is kept. */
 export async function deleteAllData(db: GymDB = defaultDb) {
-  await db.transaction('rw', db.sessions, db.setLogs, db.settings, async () => {
-    await Promise.all([db.sessions.clear(), db.setLogs.clear(), db.settings.clear()]);
+  const tables = [db.sessions, db.setLogs, db.settings, db.bodyChecks, db.dailyLogs];
+  await db.transaction('rw', tables, async () => {
+    await Promise.all(tables.map((t) => t.clear()));
   });
 }
 

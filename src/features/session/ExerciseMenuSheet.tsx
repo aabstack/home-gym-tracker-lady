@@ -1,6 +1,7 @@
 import { Icon } from '../../components/Icon';
 import { Sheet } from '../../components/Sheet';
 import type { Exercise } from '../../data/types';
+import { useI18n } from '../../i18n/i18n';
 
 /** Swap to another exercise with the same movement pattern, open the guide, or remove the exercise. */
 export function ExerciseMenuSheet({
@@ -18,34 +19,34 @@ export function ExerciseMenuSheet({
   onRemove: () => void;
   onClose: () => void;
 }) {
+  const i18n = useI18n();
+  const { t } = i18n;
   return (
-    <Sheet open={exercise !== null} onClose={onClose} title={exercise?.name ?? ''}>
+    <Sheet open={exercise !== null} onClose={onClose} title={exercise ? i18n.exName(exercise) : ''}>
       <div className="flex flex-col gap-2">
         <button
           type="button"
           onClick={onGuide}
-          className="flex min-h-14 items-center gap-3 rounded-2xl bg-raised px-4 text-left"
+          className="flex min-h-14 items-center gap-3 rounded-2xl bg-raised px-4 text-start"
         >
-          <Icon name="info" /> Exercise guide
+          <Icon name="info" /> {t('exmenu.guide')}
         </button>
 
         <h3 className="mt-3 text-label font-semibold uppercase tracking-wide text-muted">
-          Swap for (same movement pattern)
+          {t('exmenu.swapFor')}
         </h3>
-        {alternatives.length === 0 && (
-          <p className="text-muted">No other exercises for this pattern.</p>
-        )}
+        {alternatives.length === 0 && <p className="text-muted">{t('exmenu.none')}</p>}
         {alternatives.map((alt) => (
           <button
             key={alt.id}
             type="button"
             onClick={() => onSwap(alt)}
-            className="flex min-h-14 items-center gap-3 rounded-2xl bg-raised px-4 py-2 text-left"
+            className="flex min-h-14 items-center gap-3 rounded-2xl bg-raised px-4 py-2 text-start"
           >
             <Icon name="swap" />
             <span>
-              <span className="block font-medium">{alt.name}</span>
-              <span className="block text-label text-muted">{alt.targets.join(' · ')}</span>
+              <span className="block font-medium">{i18n.exName(alt)}</span>
+              <span className="block text-label text-muted">{i18n.muscles(alt.targets)}</span>
             </span>
           </button>
         ))}
@@ -53,9 +54,9 @@ export function ExerciseMenuSheet({
         <button
           type="button"
           onClick={onRemove}
-          className="mt-3 flex min-h-14 items-center gap-3 rounded-2xl px-4 text-left text-danger"
+          className="mt-3 flex min-h-14 items-center gap-3 rounded-2xl px-4 text-start text-danger"
         >
-          <Icon name="trash" /> Remove exercise from this workout
+          <Icon name="trash" /> {t('exmenu.remove')}
         </button>
       </div>
     </Sheet>

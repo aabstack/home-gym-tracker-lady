@@ -18,15 +18,17 @@ Version 2 is built around her own 16-week plan (bigger, stronger glutes and thig
   - **B — Upper body, arms and core:** band lat pulldown, one-arm DB row, incline DB press, lateral raise, face pull, band triceps pushdown, dead bug
   - **C — Glutes and hamstrings:** Romanian deadlift, hip thrust (paused), step-up, single-leg hamstring bridge, side-lying hip abduction, Pallof press
 - Deload every 6th week (half the sets, same weights).
-- Walking (8,000–12,000 steps), nutrition (≈1,900–2,000 kcal on training days, 110–120 g protein) and 4-weekly measurements come from her plan and are listed in PROGRAM.md; the app doesn't track them yet.
+- Walking (8,000–12,000 steps a day), protein (110–120 g a day) and a body check-in every 4 weeks come from her plan and are tracked in the app (see below).
 
 If she is pregnant or postpartum, has pain, or has a medical condition, check with a doctor or physiotherapist before starting, and skip or swap anything that doesn't feel right.
 
 ## Features
-Same as the male version:
+- **English and Arabic.** Follows the phone language by default; change it in Settings → Language. Arabic uses a right-to-left layout.
 - Today screen with the next workout, training week and deload banner; tap any exercise for its guide
+- **Daily habits on Today:** steps and protein for the day against her goals, plus a 7-day average. A PWA can't read Samsung Health or Health Connect, so steps are typed in; an "Open Samsung Health" shortcut is there to look the number up.
+- **Body tab:** health profile (height, age, target weight and daily goals, all editable), InBody check-ins (weight, body fat %, skeletal muscle, fat mass, BMI, BMR, waist-hip ratio) and tape measurements (waist, hips, thigh), with change since the last check-in, progress to target, a trend chart and a reminder every 4 weeks. Her InBody 770 result of 26 Sep 2026 is preloaded as the first check-in and can be edited or deleted.
 - Warm-up checklist with a "How" animation for every item
-- Fast set logging (weight, reps, RIR, technique tags) with autosave, rest timer, "Last time" line and progression suggestions
+- **Simple set logging:** one line per set (Set · Weight · Reps · ✓), prefilled from last time, so most sets are one tap. Effort (RIR), technique tags and notes sit behind the set number; tap a logged set to change it. Autosave, rest timer, "Last time" line and progression suggestions.
 - Animated stick-figure demo for every exercise, timed to its tempo, plus a "Watch demo" YouTube search
 - History list and calendar, progress charts, JSON/CSV backup, works fully offline
 

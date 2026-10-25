@@ -2,7 +2,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from './db';
 import { uuid } from './id';
 import { loadSettings } from './settings';
-import type { DayId, Session, SetLog } from './types';
+import type { BodyCheck, DailyLog, DayId, Session, SetLog } from './types';
 import { isDeloadWeek, resolveProgramStart, weekNumber } from '../domain/deload';
 import { buildSessionItems } from '../domain/session';
 import { programSeed } from './seed';
@@ -121,4 +121,30 @@ export function useProgramDays() {
 
 export function useSessions() {
   return useLiveQuery(() => db.sessions.orderBy('startedAt').toArray(), []);
+}
+
+// ---- Body tracking ----
+
+export function useBodyChecks() {
+  return useLiveQuery(() => db.bodyChecks.toArray(), []);
+}
+
+export function useDailyLogs() {
+  return useLiveQuery(() => db.dailyLogs.toArray(), []);
+}
+
+/** Create or update one day's habits (steps, protein). */
+export async function saveDailyLog(date: string, patch: Partial<Omit<DailyLog, 'date'>>) {
+  await db.transaction('rw', db.dailyLogs, async () => {
+    const existing = await db.dailyLogs.get(date);
+    await db.dailyLogs.put({ ...existing, ...patch, date, updatedAt: Date.now() });
+  });
+}
+
+export async function saveBodyCheck(check: BodyCheck) {
+  await db.bodyChecks.put(check);
+}
+
+export async function deleteBodyCheck(id: string) {
+  await db.bodyChecks.delete(id);
 }
